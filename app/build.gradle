@@ -1,5 +1,16 @@
+import org.gradle.testing.jacoco.tasks.JacocoReport
+
+
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.detekt)
+
+    id 'jacoco'
+
+}
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
 }
 
 android {
@@ -41,4 +52,29 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
+}
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.register("jacocoTestReport", JacocoReport) {
+    dependsOn "testDebugUnitTest"
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*']
+
+    def javaClasses = fileTree(dir: "$buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
+    def kotlinClasses = fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
+
+    classDirectories.setFrom(files([javaClasses, kotlinClasses]))
+    sourceDirectories.setFrom(files(["$projectDir/src/main/java", "$projectDir/src/main/kotlin"]))
+
+    executionData.setFrom(fileTree(dir: buildDir, includes: [
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"
+    ]))
 }
