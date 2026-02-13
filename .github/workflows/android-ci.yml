@@ -34,6 +34,10 @@ jobs:
           name: lint-results
           path: app/build/reports/lint-results-debug.html
 
+      - name: Run Detekt
+        run: ./gradlew :app:detekt
+
+
       - name: Upload detekt report
         if: always()
         uses: actions/upload-artifact@v4
@@ -62,7 +66,7 @@ jobs:
         run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Generate test coverage report
-        run: ./gradlew jacocoTestReport
+        run: ./gradlew :app:jacocoTestReport
 
       - name: Upload test results
         if: always()
