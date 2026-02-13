@@ -3,9 +3,9 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.detekt)
-
     id 'jacoco'
+    id 'io.gitlab.arturbosch.detekt'
+
 
 }
 detekt {
